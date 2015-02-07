@@ -2,5 +2,5 @@ package proyecto.main
 
 class Pepita {
 
- //Esto es un comentario 
+ //Esto es un comentario. 
 }
