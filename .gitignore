@@ -1,0 +1,9 @@
+target
+.project
+.classpath
+.settings
+.cache
+.README.md.html
+.worksheet
+*.sc
+/bin
