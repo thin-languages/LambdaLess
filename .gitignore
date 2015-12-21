@@ -7,3 +7,5 @@ target
 .worksheet
 *.sc
 /bin
+.cache-main
+.cache-tests
