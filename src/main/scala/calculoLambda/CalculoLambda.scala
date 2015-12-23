@@ -18,7 +18,7 @@ object CalculoLambda {
     
     lazy val applicable = lambda | variable | "("~>expression<~")"
     
-    lazy val expression:Parser[Expr] = applicable ~ applicable.* ^^ {case (i~as) => (i/:as)(App)}
+    lazy val expression:Parser[Expr] = application | applicable
         
   }
   
