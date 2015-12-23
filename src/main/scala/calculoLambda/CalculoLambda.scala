@@ -12,14 +12,14 @@ object CalculoLambda {
     
     lazy val variable = "[a-zA-Z_]+".r ^^ Var
     
-    lazy val lambda = ("""\"""~>variable<~".")~(expresion) ^^ { case (v~e) => Lambda(v,e)}
+    lazy val lambda = ("""\"""~>variable<~".")~(expression) ^^ { case (v~e) => Lambda(v,e)}
     
-    lazy val aplicacion = applicable ~ expresion ^^ { case (e1~e2) => App(e1,e2)}
+    lazy val application = applicable ~ applicable.+ ^^ {case (i~as) => (i/:as)(App)}
     
-    lazy val applicable = lambda | variable | "("~>expresion<~")"
+    lazy val applicable = lambda | variable | "("~>expression<~")"
     
-    lazy val expresion:Parser[Expr] = applicable ~ expresion.* ^^ {case (i~as) => (i/:as)(App)}
-    
+    lazy val expression:Parser[Expr] = applicable ~ applicable.* ^^ {case (i~as) => (i/:as)(App)}
+        
   }
   
 }

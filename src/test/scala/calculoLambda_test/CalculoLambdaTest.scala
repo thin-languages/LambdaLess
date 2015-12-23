@@ -21,15 +21,28 @@ class CalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
 
   """application (x sar)""" should "be parsed to App x sar" in {
 
-    parseAll(aplicacion, "x sar").get shouldBe App(Var("x"), Var("sar"))
+    parseAll(application, "x sar").get shouldBe App(Var("x"), Var("sar"))
+
+  }
+  
+  
+  "application x y z" should "be parsed to an app of an app of 2 vars with a var" in {
+
+    parseAll(application, "x y z").get shouldBe App(App(Var("x"),Var("y")), Var("z"))
+
+  }
+  
+    "expression x y z" should "be parsed to an app of an app of 2 vars with a var" in {
+
+    parseAll(expression, "x y z").get shouldBe App(App(Var("x"),Var("y")), Var("z"))
 
   }
   
 
   
-   """app*3 ((x y) z) sar""" should "be parsed to App x sar" in {
+   "app*3 ((x y) z) sar" should "be parsed to App x sar" in {
 
-    parseAll(expresion, "((x y) z) sar").get shouldBe App(App(App(Var("x"),
+    parseAll(expression, "x y z sar").get shouldBe App(App(App(Var("x"),
                                                                Var("y")), 
                                                            Var("z")),
                                                        Var("sar"))
@@ -62,7 +75,7 @@ class CalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
 
   "An expresion" should "be parsed correctly" in {
 
-    parseAll(expresion, """((\y.x) b) (\x.y x)""").get shouldBe App(App(Lambda(Var("y"), Var("x")),
+    parseAll(expression, """(\y.x) b (\x.y x)""").get shouldBe App(App(Lambda(Var("y"), Var("x")),
                                                                         Var("b")),
                                                                     Lambda(Var("x"),App(Var("y"), Var("x"))))
 
@@ -70,7 +83,7 @@ class CalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
   
    "Invalid expresion" should "not be parsed" in {
 
-    parseAll(expresion, """((\y.x) b) ((\x.y x) invalidVar*-2)""").successful shouldBe false
+    parseAll(expression, """(\y.x) b ((\x.y x) invalidVar*-2)""").successful shouldBe false
 
   }
 }
