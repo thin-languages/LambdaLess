@@ -63,4 +63,9 @@ class ReduceCalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
 
   }
 
+   "Expression that ends when lazy evaluated" should "end" in { 
+
+    App(Lambda(vA,vB),App(Lambda(vA,App(vA,vA)),Lambda(vB,App(vB,vB)))).reduce shouldBe vB
+
+  }
 }

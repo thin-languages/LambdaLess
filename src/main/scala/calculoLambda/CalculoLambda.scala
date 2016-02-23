@@ -2,7 +2,7 @@ package calculoLambda
 
 import scala.util.parsing.combinator._
 
-object CalculoLambda {
+object CalculoLambda { 
   trait Expr
   {
     def replace(toReplace:Expr, replacement:Expr):Expr
@@ -23,11 +23,11 @@ object CalculoLambda {
   }
   case class App(par1:Expr, par2:Expr) extends Expr
   {
-    def reduce = par1.reduce.apply(par2.reduce) match {
+    def reduce = par1.apply(par2) match {
       case expr @ App(Lambda(_,_),_) => expr.reduce
       case expr => expr 
     }
-    def apply(param:Expr) = this
+    def apply(param:Expr) = App(this.reduce,param.reduce)
     def replace(toReplace:Expr,replacement:Expr) =
       App(par1.replace(toReplace,replacement),par2.replace(toReplace,replacement))
   }
