@@ -12,7 +12,7 @@ object CalculoLambda {
   case class Lambda(par:Var, body: Expr) extends Expr
   {
     def reduce = Lambda(par.reduce,body.reduce)
-    def apply(param:Expr) = body.replace(par,param)
+    def apply(param:Expr) = body.replace(par,param).reduce
     def replace(toReplace:Expr,replacement:Expr) = body.replace(toReplace,replacement)  
   }
   case class Var(id:String) extends Expr
@@ -23,7 +23,10 @@ object CalculoLambda {
   }
   case class App(par1:Expr, par2:Expr) extends Expr
   {
-    def reduce = par1.reduce.apply(par2.reduce)
+    def reduce = par1.reduce.apply(par2.reduce) match {
+      case expr @ App(Lambda(_,_),_) => expr.reduce
+      case expr => expr 
+    }
     def apply(param:Expr) = this
     def replace(toReplace:Expr,replacement:Expr) =
       App(par1.replace(toReplace,replacement),par2.replace(toReplace,replacement))

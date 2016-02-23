@@ -1,9 +1,11 @@
 package calculoLambda_test
 
 import org.scalatest._
+
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import calculoLambda.CalculoLambda._
+import scala.util.{Try}
 
 class ReduceCalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
 
@@ -54,5 +56,11 @@ class ReduceCalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
     App(App(Lambda(Var("X"),Lambda(Var("Y"),Var("X"))),Lambda(Var("Z"),Var("Z"))),Lambda(Var("A"),Var("A"))).reduce shouldBe Lambda(Var("A"),Var("A"))
 
   }
-     
+  
+  "Expression that never ends" should "not end" in { 
+
+    an [StackOverflowError] should be thrownBy App(Lambda(vA,App(vA,vA)),Lambda(vB,App(vB,vB))).reduce
+
+  }
+
 }
