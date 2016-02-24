@@ -5,9 +5,10 @@ import org.scalatest._
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import calculoLambda.CalculoLambda._
+import calculoLambda.CalculoLambda.BetaReduction.LazyEvaluation
 import scala.util.{Try}
 
-class ReduceCalculoLambdaTest extends FlatSpec with Matchers with LambdaParser {
+class ReduceCalculoLambdaTest extends FlatSpec with Matchers with LambdaParser with LazyEvaluation{
 
   val vA = Var("A")
   val vB = Var("B")

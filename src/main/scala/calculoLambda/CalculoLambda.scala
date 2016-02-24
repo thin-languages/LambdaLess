@@ -3,31 +3,47 @@ package calculoLambda
 import scala.util.parsing.combinator._
 
 object CalculoLambda { 
-  trait Expr
+
+  object BetaReduction{
+     trait EagerEvaluation{
+      implicit class EagerEval(expr:Expr){
+        def reduce:Expr = expr match{
+           case Var(id) => Var(id)
+           case Lambda(param,body) => Lambda(param,body.reduce)
+           case App(a:Var,b) => App(a,b.reduce)
+           case App(a:App,b) => App(a.reduce,b.reduce).reduce
+           case App(a:Lambda,b) => a.apply(b.reduce).reduce
+        }
+      }
+    }
+    trait LazyEvaluation{
+      implicit class LazyEval(expr:Expr){
+        def reduce:Expr = expr match{
+          case Var(id) => Var(id)
+          case Lambda(param,body) => Lambda(param,body.reduce)
+          case App(a:Var,b) => App(a,b.reduce)
+          case App(a:App,b) => App(a.reduce,b).reduce
+          case App(a:Lambda,b) => a.apply(b).reduce
+        }
+      }
+    }
+  }
+  trait Expr extends BetaReduction.LazyEvaluation
   {
     def replace(toReplace:Expr, replacement:Expr):Expr
-    def reduce:Expr
-    def apply(param:Expr):Expr
+    def apply(param:Expr):Expr = App(this, param)
   }
   case class Lambda(par:Var, body: Expr) extends Expr
   {
-    def reduce = Lambda(par.reduce,body.reduce)
-    def apply(param:Expr) = body.replace(par,param).reduce
+    override def apply(param:Expr) = body.replace(par,param)
     def replace(toReplace:Expr,replacement:Expr) = body.replace(toReplace,replacement)  
   }
   case class Var(id:String) extends Expr
   {
-    def reduce = this
-    def apply(param:Expr) = App(this,param)
     def replace(toReplace:Expr,replacement:Expr) = if (toReplace == this) replacement else this
   }
   case class App(par1:Expr, par2:Expr) extends Expr
   {
-    def reduce = par1.apply(par2) match {
-      case expr @ App(Lambda(_,_),_) => expr.reduce
-      case expr => expr 
-    }
-    def apply(param:Expr) = App(this.reduce,param.reduce)
     def replace(toReplace:Expr,replacement:Expr) =
       App(par1.replace(toReplace,replacement),par2.replace(toReplace,replacement))
   }
